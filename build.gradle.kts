@@ -183,7 +183,11 @@ allprojects {
       param.environment("GRAVITINO_CI_LOCALSTACK_DOCKER_IMAGE", "localstack/localstack:latest")
 
       val dockerRunning = project.rootProject.extra["dockerRunning"] as? Boolean ?: false
+      println("running: $dockerRunning")
+
       val macDockerConnector = project.rootProject.extra["macDockerConnector"] as? Boolean ?: false
+      println("connected: $macDockerConnector")
+
       if (OperatingSystem.current().isMacOsX() &&
         dockerRunning &&
         macDockerConnector
@@ -213,6 +217,7 @@ allprojects {
 
       param.useJUnitPlatform()
       val skipUTs = project.hasProperty("skipTests")
+      println("sdhishihsshohohshhis hihsih shihihs hihihsihs skipUTs is ${skipUTs}")
       if (skipUTs) {
         // Only run integration tests
         param.include("**/integration/test/**")
@@ -822,6 +827,7 @@ tasks {
       ":catalogs:catalog-jdbc-doris:copyLibAndConfig",
       ":catalogs:catalog-jdbc-mysql:copyLibAndConfig",
       ":catalogs:catalog-jdbc-clickhouse:copyLibAndConfig",
+      ":catalogs:catalog-jdbc-phoenix5:copyLibAndConfig",
       ":catalogs:catalog-jdbc-oceanbase:copyLibAndConfig",
       ":catalogs:catalog-jdbc-postgresql:copyLibAndConfig",
       ":catalogs:catalog-hadoop:copyLibAndConfig",

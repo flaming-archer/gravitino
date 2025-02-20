@@ -166,7 +166,6 @@ public abstract class JdbcTableOperations implements TableOperation {
    */
   @Override
   public List<String> listTables(String databaseName) throws NoSuchSchemaException {
-
     final List<String> names = Lists.newArrayList();
 
     try (Connection connection = getConnection(databaseName);

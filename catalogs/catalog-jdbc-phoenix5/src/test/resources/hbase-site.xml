@@ -1,0 +1,12 @@
+<configuration>
+  <property>
+    <name>phoenix.schema.isNamespaceMappingEnabled</name>
+    <value>true</value>
+  </property>
+
+<!--  <property>-->
+<!--  <name>phoenix.schema.mapSystemTablesToNamespace</name>-->
+<!--  <value>true</value>-->
+<!--  </property>-->
+
+</configuration>

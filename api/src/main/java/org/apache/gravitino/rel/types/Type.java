@@ -130,5 +130,17 @@ public interface Type {
   }
 
   /** The base type of all fractional types. */
-  abstract class FractionType extends NumericType {}
+  abstract class FractionType extends NumericType {
+    private final boolean signed;
+
+    /** @param signed or unsigned of the fraction type. */
+    public FractionType(boolean signed) {
+      this.signed = signed;
+    }
+
+    /** @return True if the fraction type has signed, false otherwise. */
+    public boolean signed() {
+      return signed;
+    }
+  }
 }

@@ -26,6 +26,7 @@ import com.github.dockerjava.api.model.Info;
 import com.github.dockerjava.api.model.Network.Ipam.Config;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
+
 import java.io.Closeable;
 import java.io.IOException;
 import java.net.InetAddress;
@@ -35,6 +36,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Objects;
+
 import org.apache.gravitino.integration.test.util.CloseableGroup;
 import org.apache.gravitino.integration.test.util.TestDatabaseName;
 import org.slf4j.Logger;
@@ -43,6 +45,7 @@ import org.testcontainers.DockerClientFactory;
 import org.testcontainers.containers.Network;
 
 public class ContainerSuite implements Closeable {
+
   public static final Logger LOG = LoggerFactory.getLogger(ContainerSuite.class);
   private static volatile ContainerSuite instance = null;
   private static volatile boolean initialized = false;
@@ -69,6 +72,7 @@ public class ContainerSuite implements Closeable {
   private static volatile MySQLContainer mySQLContainer;
   private static volatile MySQLContainer mySQLVersion5Container;
   private static volatile ClickHouseContainer clickHouseContainer;
+  private static volatile PhoenixContainer phoenixContainer;
   private static volatile Map<PGImageName, PostgreSQLContainer> pgContainerMap =
       new EnumMap<>(PGImageName.class);
   private static volatile OceanBaseContainer oceanBaseContainer;
@@ -175,13 +179,11 @@ public class ContainerSuite implements Closeable {
   }
 
   /**
-   * To start and enable Ranger plugin in Hive container, <br>
-   * you can specify environment variables: <br>
-   * 1. HIVE_RUNTIME_VERSION: Hive version, currently only support `hive3`, We can support `hive2`
-   * in the future <br>
-   * 2. DOCKER_ENV_RANGER_SERVER_URL: Ranger server URL <br>
-   * 3. DOCKER_ENV_RANGER_HIVE_REPOSITORY_NAME: Ranger Hive repository name <br>
-   * 4. DOCKER_ENV_RANGER_HDFS_REPOSITORY_NAME: Ranger HDFS repository name <br>
+   * To start and enable Ranger plugin in Hive container, <br> you can specify environment
+   * variables: <br> 1. HIVE_RUNTIME_VERSION: Hive version, currently only support `hive3`, We can
+   * support `hive2` in the future <br> 2. DOCKER_ENV_RANGER_SERVER_URL: Ranger server URL <br> 3.
+   * DOCKER_ENV_RANGER_HIVE_REPOSITORY_NAME: Ranger Hive repository name <br> 4.
+   * DOCKER_ENV_RANGER_HDFS_REPOSITORY_NAME: Ranger HDFS repository name <br>
    */
   public void startHiveRangerContainer(Map<String, String> envVars) {
     // If you want to enable Hive Ranger plugin, you need both set the `RANGER_SERVER_URL` and
@@ -191,8 +193,8 @@ public class ContainerSuite implements Closeable {
     if (envVars == null
         || (!Objects.equals(envVars.get(HiveContainer.HIVE_RUNTIME_VERSION), HiveContainer.HIVE3))
         || (!envVars.containsKey(DOCKER_ENV_RANGER_SERVER_URL)
-            || (!envVars.containsKey(RangerContainer.DOCKER_ENV_RANGER_HIVE_REPOSITORY_NAME)
-                && !envVars.containsKey(RangerContainer.DOCKER_ENV_RANGER_HDFS_REPOSITORY_NAME)))) {
+        || (!envVars.containsKey(RangerContainer.DOCKER_ENV_RANGER_HIVE_REPOSITORY_NAME)
+        && !envVars.containsKey(RangerContainer.DOCKER_ENV_RANGER_HDFS_REPOSITORY_NAME)))) {
       throw new IllegalArgumentException("Error environment variables for Hive Ranger container");
     }
 
@@ -684,7 +686,7 @@ public class ContainerSuite implements Closeable {
       endIp = startIp + ((1L << (128 - prefixLength)) - 1);
     }
 
-    return new long[] {startIp, endIp};
+    return new long[]{startIp, endIp};
   }
 
   @Override
@@ -709,5 +711,36 @@ public class ContainerSuite implements Closeable {
 
   public ClickHouseContainer getClickHouseContainer() {
     return clickHouseContainer;
+  }
+
+  public void startPhoenixContainer(TestDatabaseName testDatabaseName) {
+    if (phoenixContainer == null) {
+      synchronized (ContainerSuite.class) {
+        if (phoenixContainer == null) {
+          initIfNecessary();
+          PhoenixContainer.Builder phoenixBuilder =
+              PhoenixContainer.builder()
+                  .withHostName("hbase-docker")
+                  .withEnvVars(
+                      ImmutableMap.<String, String>builder()
+                          .put("PHOENIX_PASSWORD", PhoenixContainer.PASSWORD)
+                          .build())
+                  .withExposePorts(
+                      ImmutableSet.of(PhoenixContainer.PHOENIX_PORT))
+                  .withNetwork(network);
+
+          PhoenixContainer container = closer.register(phoenixBuilder.build());
+          container.start();
+          phoenixContainer = container;
+        }
+      }
+    }
+    synchronized (PhoenixContainer.class) {
+      phoenixContainer.createDatabase(testDatabaseName);
+    }
+  }
+
+  public PhoenixContainer getPhoenixContainer() {
+    return phoenixContainer;
   }
 }

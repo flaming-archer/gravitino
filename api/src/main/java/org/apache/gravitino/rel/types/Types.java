@@ -192,14 +192,22 @@ public class Types {
 
   /** The float type in Gravitino. */
   public static class FloatType extends Type.FractionType {
-    private static final FloatType INSTANCE = new FloatType();
+    private static final FloatType INSTANCE = new FloatType(true);
+    private static final FloatType UNSIGNED_INSTANCE = new FloatType(false);
+
+    /** @return The singleton instance of unsigned float type */
+    public static FloatType unsigned() {
+      return UNSIGNED_INSTANCE;
+    }
 
     /** @return The singleton instance of {@link FloatType}. */
     public static FloatType get() {
       return INSTANCE;
     }
 
-    private FloatType() {}
+    private FloatType(boolean signed) {
+      super(signed);
+    }
 
     @Override
     public Name name() {
@@ -208,29 +216,37 @@ public class Types {
 
     @Override
     public String simpleString() {
-      return "float";
+      return signed() ? "float" : "float unsigned";
     }
   }
 
   /** The double type in Gravitino. */
   public static class DoubleType extends Type.FractionType {
-    private static final DoubleType INSTANCE = new DoubleType();
+    private static final DoubleType INSTANCE = new DoubleType(true);
+    private static final DoubleType UNSIGNED_INSTANCE = new DoubleType(false);
 
-    /** @return The singleton instance of {@link DoubleType}. */
+    /** @return The singleton instance of unsigned double type */
+    public static DoubleType unsigned() {
+      return UNSIGNED_INSTANCE;
+    }
+
+    /** @return The singleton instance of {@link FloatType}. */
     public static DoubleType get() {
       return INSTANCE;
     }
 
-    private DoubleType() {}
+    private DoubleType(boolean signed) {
+      super(signed);
+    }
 
     @Override
     public Name name() {
-      return Name.DOUBLE;
+      return Name.FLOAT;
     }
 
     @Override
     public String simpleString() {
-      return "double";
+      return signed() ? "double" : "double unsigned";
     }
   }
 
@@ -249,6 +265,7 @@ public class Types {
     private final int scale;
 
     private DecimalType(int precision, int scale) {
+      super(true);
       checkPrecisionScale(precision, scale);
       this.precision = precision;
       this.scale = scale;

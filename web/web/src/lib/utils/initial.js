@@ -315,6 +315,34 @@ export const providers = [
     ]
   },
   {
+    label: 'Phoenix',
+    value: 'jdbc-phoenix5',
+    defaultProps: [
+      {
+        key: 'jdbc-driver',
+        value: '',
+        required: true,
+        description: 'e.g. org.apache.phoenix.jdbc.PhoenixDriver'
+      },
+      {
+        key: 'jdbc-url',
+        value: '',
+        required: true,
+        description: 'e.g. jdbc:phoenix:127.0.0.1:2181'
+      },
+      {
+        key: 'jdbc-user',
+        value: '',
+        required: true
+      },
+      {
+        key: 'jdbc-password',
+        value: '',
+        required: true
+      }
+    ]
+  },
+  {
     label: 'OceanBase',
     value: 'jdbc-oceanbase',
     defaultProps: [

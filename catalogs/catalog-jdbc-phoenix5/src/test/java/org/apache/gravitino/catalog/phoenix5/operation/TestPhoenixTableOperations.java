@@ -128,6 +128,20 @@ public class TestPhoenixTableOperations extends TestPhoenix {
             .withNullable(true)
             .build());
 
+//    columns.add(
+//        JdbcColumn.builder()
+//            .withName("COL_16.FOR")
+//            .withType(Types.FixedCharType.of(10))
+//            .withNullable(true)
+//            .build());
+//
+//    columns.add(
+//        JdbcColumn.builder()
+//            .withName("COL_16.BAR")
+//            .withType(Types.FixedCharType.of(10))
+//            .withNullable(true)
+//            .build());
+
     // Test create increment key for unique index.
     Index[] indexes =
         new Index[]{
@@ -151,6 +165,7 @@ public class TestPhoenixTableOperations extends TestPhoenix {
         null);
 
     JdbcTable load = TABLE_OPERATIONS.load(TEST_DB_NAME.toString(), tableName.toUpperCase());
+
     assertionsTableInfo(
         tableName.toUpperCase(),
         null,

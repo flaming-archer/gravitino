@@ -268,8 +268,14 @@ public class PhoenixTableOperations extends JdbcTableOperations {
     Expression defaultValue =
         columnDefaultValueConverter.toGravitino(typeBean, columnDef, false, nullable);
 
+//    String columnFamily = column.getString("COLUMN_FAMILY");
+    String columnName = column.getString("COLUMN_NAME");
+//    if (StringUtils.isNotEmpty(columnFamily)) {
+//      columnName = columnFamily + ":" + columnName;
+//    }
+
     return JdbcColumn.builder()
-        .withName(column.getString("COLUMN_NAME"))
+        .withName(columnName)
         .withType(typeConverter.toGravitino(typeBean))
         .withComment(StringUtils.isEmpty(comment) ? null : comment)
         .withNullable(nullable)

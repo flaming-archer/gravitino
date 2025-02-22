@@ -43,7 +43,7 @@ public class PhoenixCatalog extends JdbcCatalog {
 
   @Override
   public String shortName() {
-    return "jdbc-phoenix";
+    return "jdbc-phoenix5";
   }
 
   @Override

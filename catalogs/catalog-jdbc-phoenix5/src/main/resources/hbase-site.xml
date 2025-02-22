@@ -1,0 +1,7 @@
+<configuration>
+    <property>
+      <name>phoenix.schema.isNamespaceMappingEnabled</name>
+      <value>true</value>
+    </property>
+
+</configuration>

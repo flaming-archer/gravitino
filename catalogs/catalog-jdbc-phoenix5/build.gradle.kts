@@ -84,7 +84,8 @@ tasks {
     from("src/main/resources")
     into("$rootDir/distribution/package/catalogs/jdbc-phoenix5/conf")
 
-    include("jdbc-phoenix.conf")
+    include("jdbc-phoenix5.conf")
+    include("hbase-site.xml")
 
     exclude { details ->
       details.file.isDirectory()

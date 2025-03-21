@@ -828,6 +828,7 @@ tasks {
       ":catalogs:catalog-jdbc-mysql:copyLibAndConfig",
       ":catalogs:catalog-jdbc-clickhouse:copyLibAndConfig",
       ":catalogs:catalog-jdbc-phoenix5:copyLibAndConfig",
+      ":catalogs:catalog-jdbc-gbase:copyLibAndConfig",
       ":catalogs:catalog-jdbc-oceanbase:copyLibAndConfig",
       ":catalogs:catalog-jdbc-postgresql:copyLibAndConfig",
       ":catalogs:catalog-hadoop:copyLibAndConfig",

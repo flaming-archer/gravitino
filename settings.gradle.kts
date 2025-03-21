@@ -35,9 +35,10 @@ include("catalogs:catalog-lakehouse-hudi")
 include(
   "catalogs:catalog-jdbc-common",
   "catalogs:catalog-jdbc-doris",
-  "catalogs:catalog-jdbc-phoenix5",
+  "catalogs:catalog-jdbc-gbase",
   "catalogs:catalog-jdbc-mysql",
   "catalogs:catalog-jdbc-clickhouse",
+  "catalogs:catalog-jdbc-phoenix5",
   "catalogs:catalog-jdbc-postgresql",
   "catalogs:catalog-jdbc-oceanbase"
 )

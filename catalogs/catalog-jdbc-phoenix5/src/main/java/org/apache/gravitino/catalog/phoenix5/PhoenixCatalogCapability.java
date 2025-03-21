@@ -37,12 +37,12 @@ public class PhoenixCatalogCapability implements Capability {
    *
    * <p>$ - End of the string
    */
-  public static final String CLICKHOUSE_NAME_PATTERN = "^[\\w\\p{L}-$/=]{1,64}$";
+  public static final String NAME_PATTERN = "^[\\w\\p{L}-$/=]{1,64}$";
 
   @Override
   public CapabilityResult specificationOnName(Scope scope, String name) {
     // TODO: Validate the name against reserved words
-    if (!name.matches(CLICKHOUSE_NAME_PATTERN)) {
+    if (!name.matches(NAME_PATTERN)) {
       return CapabilityResult.unsupported(
           String.format("The %s name '%s' is illegal.", scope, name));
     }

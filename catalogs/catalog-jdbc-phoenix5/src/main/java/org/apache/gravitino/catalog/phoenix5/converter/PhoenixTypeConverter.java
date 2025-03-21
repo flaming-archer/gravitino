@@ -180,6 +180,6 @@ public class PhoenixTypeConverter extends JdbcTypeConverter {
     }
     throw new IllegalArgumentException(
         String.format(
-            "Couldn't convert Gravitino type %s to ClickHouse type", type.simpleString()));
+            "Couldn't convert Gravitino type %s to Phoenix type", type.simpleString()));
   }
 }

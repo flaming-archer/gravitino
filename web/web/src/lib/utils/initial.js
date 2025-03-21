@@ -343,6 +343,34 @@ export const providers = [
     ]
   },
   {
+    label: 'Gbase',
+    value: 'jdbc-gbase',
+    defaultProps: [
+      {
+        key: 'jdbc-driver',
+        value: '',
+        required: true,
+        description: 'e.g. com.gbase.jdbc.Driver'
+      },
+      {
+        key: 'jdbc-url',
+        value: '',
+        required: true,
+        description: 'e.g.  jdbc:gbase://localhost:5258'
+      },
+      {
+        key: 'jdbc-user',
+        value: '',
+        required: true
+      },
+      {
+        key: 'jdbc-password',
+        value: '',
+        required: true
+      }
+    ]
+  },
+  {
     label: 'OceanBase',
     value: 'jdbc-oceanbase',
     defaultProps: [

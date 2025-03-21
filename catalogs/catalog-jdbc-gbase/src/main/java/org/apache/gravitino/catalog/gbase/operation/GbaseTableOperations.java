@@ -21,19 +21,15 @@ package org.apache.gravitino.catalog.gbase.operation;
 import static org.apache.gravitino.rel.Column.DEFAULT_VALUE_NOT_SET;
 
 import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
 
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.gravitino.catalog.jdbc.JdbcColumn;
-import org.apache.gravitino.catalog.jdbc.converter.JdbcTypeConverter;
 import org.apache.gravitino.catalog.jdbc.operation.JdbcTableOperations;
 import org.apache.gravitino.catalog.jdbc.utils.JdbcConnectorUtils;
-import org.apache.gravitino.exceptions.NoSuchSchemaException;
 import org.apache.gravitino.exceptions.TableAlreadyExistsException;
 import org.apache.gravitino.rel.TableChange;
-import org.apache.gravitino.rel.expressions.Expression;
 import org.apache.gravitino.rel.expressions.distributions.Distribution;
 import org.apache.gravitino.rel.expressions.distributions.Distributions;
 import org.apache.gravitino.rel.expressions.sorts.SortOrder;
@@ -41,11 +37,8 @@ import org.apache.gravitino.rel.expressions.transforms.Transform;
 import org.apache.gravitino.rel.indexes.Index;
 
 import java.sql.Connection;
-import java.sql.DatabaseMetaData;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -197,15 +190,6 @@ public class GbaseTableOperations extends JdbcTableOperations {
         .collect(Collectors.joining(", "));
   }
 
-  protected ResultSet getTables(Connection connection, String database) throws SQLException {
-    final DatabaseMetaData metaData = connection.getMetaData();
-    //    String catalogName = connection.getCatalog();
-    //    String schemaName = connection.getSchema();
-    // Gbase tables include : DICTIONARY", "LOG TABLE", "MEMORY TABLE",
-    // "REMOTE TABLE", "TABLE", "VIEW", "SYSTEM TABLE", "TEMPORARY TABLE
-    return metaData.getTables(connection.getCatalog(), database, null, null);
-  }
-
   @Override
   protected String generatePurgeTableSql(String tableName) {
     throw new UnsupportedOperationException(
@@ -250,65 +234,5 @@ public class GbaseTableOperations extends JdbcTableOperations {
     return sqlBuilder;
   }
 
-  protected ResultSet getTable(Connection connection, String databaseName, String tableName)
-      throws SQLException {
-    final DatabaseMetaData metaData = connection.getMetaData();
-    return metaData.getTables(connection.getCatalog(), databaseName, tableName, null);
-  }
 
-  protected JdbcColumn.Builder getBasicJdbcColumnInfo(ResultSet column) throws SQLException {
-    JdbcTypeConverter.JdbcTypeBean typeBean =
-        new JdbcTypeConverter.JdbcTypeBean(column.getString("TYPE_NAME"));
-    typeBean.setColumnSize(column.getInt("COLUMN_SIZE"));
-    typeBean.setScale(column.getInt("DECIMAL_DIGITS"));
-    String comment = column.getString("REMARKS");
-    boolean nullable = column.getBoolean("NULLABLE");
-
-    String columnDef = column.getString("COLUMN_DEF");
-    //    boolean isExpression = "YES".equals(column.getString("IS_GENERATEDCOLUMN"));
-    Expression defaultValue =
-        columnDefaultValueConverter.toGravitino(typeBean, columnDef, false, nullable);
-
-    //    String columnFamily = column.getString("COLUMN_FAMILY");
-    String columnName = column.getString("COLUMN_NAME");
-    //    if (StringUtils.isNotEmpty(columnFamily)) {
-    //      columnName = columnFamily + ":" + columnName;
-    //    }
-
-    return JdbcColumn.builder()
-        .withName(columnName)
-        .withType(typeConverter.toGravitino(typeBean))
-        .withComment(StringUtils.isEmpty(comment) ? null : comment)
-        .withNullable(nullable)
-        .withDefaultValue(defaultValue);
-  }
-
-  @Override
-  public List<String> listTables(String databaseName) throws NoSuchSchemaException {
-
-    final List<String> names = Lists.newArrayList();
-
-    try (Connection connection = dataSource.getConnection();
-        ResultSet tables = getTables(connection, databaseName)) {
-      while (tables.next()) {
-        //        if (Objects.equals(tables.getString("TABLE_CAT"), databaseName.toUpperCase())) {
-        System.out.println(
-            tables.getString("TABLE_CAT") + "1  " + tables.getString("TABLE_SCHEM") + "2  "
-                + tables.getString("TABLE_NAME"));
-        names.add(tables.getString("TABLE_NAME"));
-        //        }
-      }
-      LOG.info("Finished listing tables size {} for database name {} ", names.size(),
-          databaseName.toUpperCase());
-      return names;
-    } catch (final SQLException se) {
-      throw this.exceptionMapper.toGravitinoException(se);
-    }
-  }
-
-  @Override
-  protected ResultSet getPrimaryKeys(String database, String tableName, DatabaseMetaData metaData)
-      throws SQLException {
-    return metaData.getPrimaryKeys("", database, tableName);
-  }
 }

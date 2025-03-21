@@ -88,7 +88,6 @@ tasks {
     into("$rootDir/distribution/package/catalogs/jdbc-gbase/conf")
 
     include("jdbc-gbase.conf")
-    include("hbase-site.xml")
 
     exclude { details ->
       details.file.isDirectory()
